@@ -41,9 +41,9 @@ MagnetometerRaw HMC5883L::readRawAxis()
 {
   uint8_t* buffer = read(DATA_REGISTER_BEGIN, 6);
   MagnetometerRaw raw = MagnetometerRaw();
-  raw.XAxis = (buffer[0] << 8) | buffer[1];
-  raw.ZAxis = (buffer[2] << 8) | buffer[3];
-  raw.YAxis = (buffer[4] << 8) | buffer[5];
+  raw.XAxis = int16_t ((buffer[0] << 8) | buffer[1]);
+  raw.ZAxis = int16_t ((buffer[2] << 8) | buffer[3]);
+  raw.YAxis = int16_t ((buffer[4] << 8) | buffer[5]);
   return raw;
 }
 
