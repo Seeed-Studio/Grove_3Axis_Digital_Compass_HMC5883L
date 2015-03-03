@@ -1,17 +1,11 @@
-/*****************************************************************************/	
-//	Function:	 Cpp file for HMC5883L
+/*****************************************************************************/
+//    Function:     Cpp file for HMC5883L
 //  Hardware:    Grove - 3-Axis Digital Compass
-//	Arduino IDE: Arduino-1.0
-//	Author:	 FrankieChu		
-//	Date: 	 Jan 10,2013
-//	Version: v1.0
-//
-//  Modified by: Yihui Xiong
-//  Data:        June 19, 2013
-//  Description: functions(setScale and setMeasurementMode) add return statement,
-//               change the way to compare float variable
-//
-//	by www.seeedstudio.com
+//    Arduino IDE: Arduino-1.0
+//    Author:     FrankieChu
+//    Date:      Jan 10,2013
+//    Version: v1.0
+//    by www.seeedstudio.com
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -29,128 +23,190 @@
 //
 /*******************************************************************************/
 
-#include <Arduino.h> 
+#include <Arduino.h>
 #include "HMC5883L.h"
 
 HMC5883L::HMC5883L()
 {
-  m_Scale = 1;
+    m_Scale = 1;
 }
+
+void HMC5883L::initCompass()
+{
+    
+    delay(5);
+    
+    int error = setScale(1.3);                              // Set the scale of the compass.
+    
+    if(error != 0)                                                  // If there is an error, print it out.
+    {
+        Serial.println(getErrorText(error));
+    }
+    
+    error = setMeasurementMode(MEASUREMENT_CONTINUOUS);     // Set the measurement mode to Continuous
+    
+    if(error != 0)                                                  // If there is an error, print it out.
+    {
+        Serial.println(getErrorText(error));
+    }
+    
+#if __Dbg
+    //cout << "val_origin = " << val_origin << endl;
+    //cout <<"init ok" << endl;
+#endif
+}
+
+
+int HMC5883L::getCompass()
+{
+    MagnetometerRaw raw = readRawAxis();
+    // Retrived the scaled values from the compass (scaled to the configured scale).
+    MagnetometerScaled scaled = readScaledAxis();
+
+    // Values are accessed like so:
+    int MilliGauss_OnThe_XAxis = scaled.XAxis;// (or YAxis, or ZAxis)
+
+    // Calculate heading when the magnetometer is level, then correct for signs of axis.
+    float heading = atan2(scaled.YAxis, scaled.XAxis);
+
+    // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+    // Find yours here: http://www.magnetic-declination.com/
+    // Mine is: -2??37' which is -2.617 Degrees, or (which we need) -0.0456752665 radians, I will use -0.0457
+    // If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+    float declinationAngle = -0.0457;
+    heading += declinationAngle;
+
+    // Correct for when signs are reversed.
+    if(heading < 0)
+    heading += 2*PI;
+
+    // Check for wrap due to addition of declination.
+    if(heading > 2*PI)
+    heading -= 2*PI;
+
+    // Convert radians to degrees for readability.
+    float headingDegrees = heading * 180/M_PI;
+
+    // Output the data via the serial port.
+    
+    int degree = headingDegrees*10;
+    
+    return degree;
+}
+
+
 
 MagnetometerRaw HMC5883L::readRawAxis()
 {
-  uint8_t* buffer = read(DATA_REGISTER_BEGIN, 6);
-  MagnetometerRaw raw = MagnetometerRaw();
-  raw.XAxis = int16_t ((buffer[0] << 8) | buffer[1]);
-  raw.ZAxis = int16_t ((buffer[2] << 8) | buffer[3]);
-  raw.YAxis = int16_t ((buffer[4] << 8) | buffer[5]);
-  return raw;
+    uint8_t* buffer = read(DATA_REGISTER_BEGIN, 6);
+    MagnetometerRaw raw = MagnetometerRaw();
+    raw.XAxis = (buffer[0] << 8) | buffer[1];
+    raw.ZAxis = (buffer[2] << 8) | buffer[3];
+    raw.YAxis = (buffer[4] << 8) | buffer[5];
+    return raw;
 }
 
 MagnetometerScaled HMC5883L::readScaledAxis()
 {
-  MagnetometerRaw raw = readRawAxis();
-  MagnetometerScaled scaled = MagnetometerScaled();
-  scaled.XAxis = raw.XAxis * m_Scale;
-  scaled.ZAxis = raw.ZAxis * m_Scale;
-  scaled.YAxis = raw.YAxis * m_Scale;
-  return scaled;
+    MagnetometerRaw raw = readRawAxis();
+    MagnetometerScaled scaled = MagnetometerScaled();
+    scaled.XAxis = raw.XAxis * m_Scale;
+    scaled.ZAxis = raw.ZAxis * m_Scale;
+    scaled.YAxis = raw.YAxis * m_Scale;
+    return scaled;
 }
 
-int HMC5883L::setScale(float gauss)
+short HMC5883L::setScale(float gauss)
 {
-    const float DELTA = .00001;
+    uint8_t regValue = 0x00;
+    if(gauss == 0.88)
+    {
+        regValue = 0x00;
+        m_Scale = 0.73;
+    }
+    else if(gauss == 1.3)
+    {
+        regValue = 0x01;
+        m_Scale = 0.92;
+    }
+    else if(gauss == 1.9)
+    {
+        regValue = 0x02;
+        m_Scale = 1.22;
+    }
+    else if(gauss == 2.5)
+    {
+        regValue = 0x03;
+        m_Scale = 1.52;
+    }
+    else if(gauss == 4.0)
+    {
+        regValue = 0x04;
+        m_Scale = 2.27;
+    }
+    else if(gauss == 4.7)
+    {
+        regValue = 0x05;
+        m_Scale = 2.56;
+    }
+    else if(gauss == 5.6)
+    {
+        regValue = 0x06;
+        m_Scale = 3.03;
+    }
+    else if(gauss == 8.1)
+    {
+        regValue = 0x07;
+        m_Scale = 4.35;
+    }
+    else
+    return ERRORCODE_1_NUM;
+
+    // Setting is in the top 3 bits of the register.
+    regValue = regValue << 5;
+    write(CONFIGURATION_REGISTERB, regValue);
+}
+
+short HMC5883L::setMeasurementMode(uint8_t mode)
+{
+    write(MODE_REGISTER, mode);
+}
+
+void HMC5883L::write(short address, short data)
+{
+    Wire.beginTransmission(HMC5883L_ADDRESS);
+    Wire.write(address);
+    Wire.write(data);
+    Wire.endTransmission();
+}
+
+uint8_t* HMC5883L::read(short address, short length)
+{
+    Wire.beginTransmission(HMC5883L_ADDRESS);
+    Wire.write(address);
+    Wire.endTransmission();
+
+    Wire.beginTransmission(HMC5883L_ADDRESS);
+    Wire.requestFrom(HMC5883L_ADDRESS, length);
+
+    uint8_t buffer[length];
     
-	uint8_t regValue = 0x00;
-	if(fabs(gauss - 0.88) <= DELTA)
-	{
-		regValue = 0x00;
-		m_Scale = 0.73;
-	}
-	else if(fabs(gauss - 1.3) <= DELTA)
-	{
-		regValue = 0x01;
-		m_Scale = 0.92;
-	}
-	else if(fabs(gauss - 1.9) <= DELTA)
-	{
-		regValue = 0x02;
-		m_Scale = 1.22;
-	}
-	else if(fabs(gauss - 2.5) <= DELTA)
-	{
-		regValue = 0x03;
-		m_Scale = 1.52;
-	}
-	else if(fabs(gauss - 4.0) <= DELTA)
-	{
-		regValue = 0x04;
-		m_Scale = 2.27;
-	}
-	else if(fabs(gauss - 4.7) <= DELTA)
-	{
-		regValue = 0x05;
-		m_Scale = 2.56;
-	}
-	else if(fabs(gauss - 5.6) <= DELTA)
-	{
-		regValue = 0x06;
-		m_Scale = 3.03;
-	}
-	else if(fabs(gauss - 8.1) <= DELTA)
-	{
-		regValue = 0x07;
-		m_Scale = 4.35;
-	}
-	else
-		return ERRORCODE_1_NUM;
-	
-	// Setting is in the top 3 bits of the register.
-	regValue = regValue << 5;
-	write(CONFIGURATION_REGISTERB, regValue);
-    return 0;
+    if(Wire.available() == length)
+    {
+        for(uint8_t i = 0; i < length; i++)
+        {
+            buffer[i] = Wire.read();
+        }
+    }
+    
+    Wire.endTransmission();
+    return buffer;
 }
 
-int HMC5883L::setMeasurementMode(uint8_t mode)
+char* HMC5883L::getErrorText(short errorCode)
 {
-	write(MODE_REGISTER, mode);
-    return 0;
-}
+    if(ERRORCODE_1_NUM == 1)
+    return ERRORCODE_1;
 
-void HMC5883L::write(int address, int data)
-{
-  Wire.beginTransmission(HMC5883L_ADDRESS);
-  Wire.write(address);
-  Wire.write(data);
-  Wire.endTransmission();
-}
-
-uint8_t* HMC5883L::read(int address, int length)
-{
-  Wire.beginTransmission(HMC5883L_ADDRESS);
-  Wire.write(address);
-  Wire.endTransmission();
-  
-  Wire.beginTransmission(HMC5883L_ADDRESS);
-  Wire.requestFrom(HMC5883L_ADDRESS, length);
-
-  uint8_t buffer[length];
-  if(Wire.available() == length)
-  {
-	  for(uint8_t i = 0; i < length; i++)
-	  {
-		  buffer[i] = Wire.read();
-	  }
-  }
-  Wire.endTransmission();
-
-  return buffer;
-}
-
-char* HMC5883L::getErrorText(int errorCode)
-{
-	if(ERRORCODE_1_NUM == 1)
-		return ERRORCODE_1;
-	
-	return "Error not defined.";
+    return "Error not defined.";
 }

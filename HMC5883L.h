@@ -1,11 +1,11 @@
-/*****************************************************************************/	
-//	Function:	 Header file for HMC5883L
+/*****************************************************************************/
+//    Function:     Header file for HMC5883L
 //  Hardware:    Grove - 3-Axis Digital Compass
-//	Arduino IDE: Arduino-1.0
-//	Author:	 Frankie.Chu		
-//	Date: 	 Jan 10,2013
-//	Version: v1.0
-//	by www.seeedstudio.com
+//    Arduino IDE: Arduino-1.0
+//    Author:     Frankie.Chu
+//    Date:      Jan 10,2013
+//    Version: v1.0
+//    by www.seeedstudio.com
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -46,37 +46,45 @@
 
 struct MagnetometerScaled
 {
-	float XAxis;
-	float YAxis;
-	float ZAxis;
+    float XAxis;
+    float YAxis;
+    float ZAxis;
 };
 
 struct MagnetometerRaw
 {
-	int XAxis;
-	int YAxis;
-	int ZAxis;
+    short XAxis;
+    short YAxis;
+    short ZAxis;
 };
 
 class HMC5883L
 {
-	public:
-	  HMC5883L();
 
-	  MagnetometerRaw readRawAxis();
-	  MagnetometerScaled readScaledAxis();
-  
-	  int setMeasurementMode(uint8_t mode);
-	  int setScale(float gauss);
+public:         // used by xadow phone
 
-	  char* getErrorText(int errorCode);
+    void initCompass();
+    int getCompass();
+    
+public:
+    HMC5883L();
 
-	protected:
-	  void write(int address, int byte);
-	  uint8_t* read(int address, int length);
+    MagnetometerRaw readRawAxis();
+    MagnetometerScaled readScaledAxis();
 
-	private:
-	  float m_Scale;
+    short setMeasurementMode(uint8_t mode);
+    short setScale(float gauss);
+
+    char* getErrorText(short errorCode);
+    
+    
+protected:
+
+    void write(short address, short byte);
+    uint8_t* read(short address, short length);
+
+    private:
+    float m_Scale;
 };
 
 #endif
