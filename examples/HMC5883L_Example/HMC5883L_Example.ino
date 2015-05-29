@@ -37,7 +37,7 @@
 // Reference the HMC5883L Compass Library
 #include <HMC5883L.h>
 
-#include "Streaming.h"
+//#include "Streaming.h"
 
 // Store our compass as a variable.
 HMC5883L compass;
@@ -51,8 +51,8 @@ MagnetometerScaled valueOffset;
 void setup()
 {
   // Initialize the serial port.
-  Serial.begin(9600);
-
+  Serial.begin(115200);
+  delay(2000);
   Serial.println("Starting the I2C interface.");
   Wire.begin(); // Start the I2C interface.
 
@@ -74,15 +74,15 @@ void setup()
 // calibrate offset of x, y and z
 void compassCalibrate(void)
 {
-  Serial << ">>>> calibrate the compass\n";
-  
+  //Serial << ">>>> calibrate the compass\n";
+  Serial.println("calibrate the compass");
   MagnetometerScaled valueMax = {0, 0, 0};
   MagnetometerScaled valueMin = {0, 0, 0};
 
   // calculate x, y and z offset
   
-  Serial << "please rotate the compass" << endl;
-  
+  //Serial << "please rotate the compass" << endl;
+  Serial.println("please rotate the compass");
   int xcount = 0;
   int ycount = 0;
   int zcount = 0;
@@ -154,12 +154,25 @@ void compassCalibrate(void)
   valueOffset.XAxis = (valueMax.XAxis + valueMin.XAxis) / 2;
   valueOffset.YAxis = (valueMax.YAxis + valueMin.YAxis) / 2;
   valueOffset.ZAxis = (valueMax.ZAxis + valueMin.ZAxis) / 2;
-  
+#if 0 
   Serial << "max: " << valueMax.XAxis << '\t' << valueMax.YAxis << '\t' << valueMax.ZAxis << endl;
   Serial << "min: " << valueMin.XAxis << '\t' << valueMin.YAxis << '\t' << valueMin.ZAxis << endl;
   Serial << "offset: " << valueOffset.XAxis << '\t' << valueOffset.YAxis << '\t' << valueOffset.ZAxis << endl;
   
   Serial << "<<<<" << endl;
+#endif  
+  Serial.print("max: ");
+  Serial.print(valueMax.XAxis);
+  Serial.print(valueMax.YAxis);
+  Serial.println(valueMax.ZAxis);
+  Serial.print("min: ");
+  Serial.print(valueMin.XAxis);
+  Serial.print(valueMin.YAxis);
+  Serial.println(valueMin.ZAxis);
+  Serial.print("offset: ");
+  Serial.print(valueOffset.XAxis);
+  Serial.print(valueOffset.YAxis);
+  Serial.println(valueOffset.ZAxis);
 }
 
 // Our main program loop.
@@ -207,9 +220,18 @@ void loop()
   // Output the data via the serial port.
   // Output(raw, scaled, heading, headingDegrees);
   
-  Serial << scaled.XAxis << ' ' << scaled.YAxis << ' ' << scaled.ZAxis << endl;
-  Serial << "arctan y/x: " << yxHeadingDegrees << " \tarctan z/x: " << zxHeadingDegrees << endl;
-
+//  Serial << scaled.XAxis << ' ' << scaled.YAxis << ' ' << scaled.ZAxis << endl;
+//  Serial << "arctan y/x: " << yxHeadingDegrees << " \tarctan z/x: " << zxHeadingDegrees << endl;
+  
+  Serial.print(scaled.XAxis);
+  Serial.print(scaled.YAxis);
+  Serial.println(scaled.ZAxis);
+  
+  Serial.print("arctan y/x: ");
+  Serial.print(yxHeadingDegrees);
+  Serial.print("arctan z/x: ");  
+  Serial.print(zxHeadingDegrees);
+  
   // Normally we would delay the application by 66ms to allow the loop
   // to run at 15Hz (default bandwidth for the HMC5883L).
   // However since we have a long serial out (104ms at 9600) we will let
@@ -240,3 +262,4 @@ void Output(MagnetometerRaw raw, MagnetometerScaled scaled, float heading, float
    Serial.print(headingDegrees);
    Serial.println(" Degrees   \t");
 }
+
