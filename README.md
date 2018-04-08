@@ -1,9 +1,11 @@
-3 Axis Digital Compass Library
+Grove 3-Axis Digital Compass
 ------------------------------
 
 This is an Arduino library for Grove - 3-Axis Digital Compass(HMC5883L) from Seeed Studio.
 
-[![Compass](http://www.seeedstudio.com/depot/images/product/axis%20compass.jpg)](http://www.seeedstudio.com/depot/grove-3axis-digital-compass-p-759.html)
+![Compass](https://statics3.seeedstudio.com/images/101020034%201.jpg)
+
+[Grove 3-Axis Digital Compass](https://www.seeedstudio.com/s/Grove-3-Axis-Digital-Compass-p-759.html)
 
 ### How to use
 Values of x, y and z read from the compass seem to have offsets.
@@ -13,7 +15,7 @@ offset = (minimum + maxmum) / 2
 value = valueRaw - offset
 ```
 
-For more information, please refer to [wiki page](http://garden.seeedstudio.com/index.php?title=Twig_-_3-axis_Compass_v1.0b).
+For more information, please refer to [wiki page](http://wiki.seeedstudio.com/Grove-3-Axis_Compass_V1.0/).
 
     
 ----

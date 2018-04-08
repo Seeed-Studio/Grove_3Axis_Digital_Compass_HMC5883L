@@ -1,0 +1,27 @@
+  
+#######################################
+# Syntax Coloring Map For 
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+MagnetometerScaled	KEYWORD1
+MagnetometerRaw	KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+initCompass	KEYWORD2
+getCompass	KEYWORD2
+HMC5883L	KEYWORD2
+readRawAxis	KEYWORD2
+readScaledAxis	KEYWORD2
+setMeasurementMode	KEYWORD2
+setScale	KEYWORD2
+getErrorText	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
