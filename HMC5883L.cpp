@@ -26,8 +26,9 @@
 #include <Arduino.h>
 #include "HMC5883L.h"
 
-HMC5883L::HMC5883L()
+HMC5883L::HMC5883L(TwoWire &w)
 {
+    _wire = & w;
     m_Scale = 1;
 }
 
@@ -174,32 +175,32 @@ short HMC5883L::setMeasurementMode(uint8_t mode)
 
 void HMC5883L::write(short address, short data)
 {
-    Wire.beginTransmission(HMC5883L_ADDRESS);
-    Wire.write(address);
-    Wire.write(data);
-    Wire.endTransmission();
+    _wire->beginTransmission(HMC5883L_ADDRESS);
+    _wire->write(address);
+    _wire->write(data);
+    _wire->endTransmission();
 }
 
 uint8_t* HMC5883L::read(short address, short length)
 {
-    Wire.beginTransmission(HMC5883L_ADDRESS);
-    Wire.write(address);
-    Wire.endTransmission();
+    _wire->beginTransmission(HMC5883L_ADDRESS);
+    _wire->write(address);
+    _wire->endTransmission();
 
-    Wire.beginTransmission(HMC5883L_ADDRESS);
-    Wire.requestFrom(HMC5883L_ADDRESS, length);
+    _wire->beginTransmission(HMC5883L_ADDRESS);
+    _wire->requestFrom(HMC5883L_ADDRESS, length);
 
     uint8_t buffer[length];
     
-    if(Wire.available() == length)
+    if(_wire->available() == length)
     {
         for(uint8_t i = 0; i < length; i++)
         {
-            buffer[i] = Wire.read();
+            buffer[i] = _wire->read();
         }
     }
     
-    Wire.endTransmission();
+    _wire->endTransmission();
     return buffer;
 }
 
