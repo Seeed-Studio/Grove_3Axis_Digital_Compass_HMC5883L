@@ -87,6 +87,7 @@ protected:
     private:
     TwoWire * _wire;
     float m_Scale;
+    uint8_t _buffer[16];
 };
 
 #endif

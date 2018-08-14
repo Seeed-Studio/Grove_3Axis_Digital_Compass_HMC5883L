@@ -190,18 +190,16 @@ uint8_t* HMC5883L::read(short address, short length)
     _wire->beginTransmission(HMC5883L_ADDRESS);
     _wire->requestFrom(HMC5883L_ADDRESS, length);
 
-    uint8_t buffer[length];
-    
     if(_wire->available() == length)
     {
-        for(uint8_t i = 0; i < length; i++)
+        for(uint8_t i = 0; i < length && i < sizeof(_buffer); i++)
         {
-            buffer[i] = _wire->read();
+            _buffer[i] = _wire->read();
         }
     }
     
     _wire->endTransmission();
-    return buffer;
+    return _buffer;
 }
 
 char* HMC5883L::getErrorText(short errorCode)
