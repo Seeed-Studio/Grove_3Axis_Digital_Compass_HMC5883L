@@ -67,7 +67,8 @@ public:         // used by xadow phone
     int getCompass();
     
 public:
-    HMC5883L();
+    HMC5883L(TwoWire &w = Wire);
+
 
     MagnetometerRaw readRawAxis();
     MagnetometerScaled readScaledAxis();
@@ -84,7 +85,9 @@ protected:
     uint8_t* read(short address, short length);
 
     private:
+    TwoWire * _wire;
     float m_Scale;
+    uint8_t _buffer[16];
 };
 
 #endif
