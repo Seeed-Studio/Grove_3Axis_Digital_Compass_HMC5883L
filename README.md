@@ -8,8 +8,11 @@ This is an Arduino library for Grove - 3-Axis Digital Compass HMC5883L from Seee
 [Grove 3-Axis Digital Compass](https://www.seeedstudio.com/s/Grove-3-Axis-Digital-Compass-p-759.html)
 
 ### How to use
-Values of x, y and z read from the compass seem to have offsets.
-To calculate the offsets, rotate the compass to get minimum and maximum of x, y, and z.
+> Values of x, y and z read from the compass seem to have offsets.
+> To calculate the offsets, rotate the compass to get minimum and maximum of x, y, and z.
+
+コンパスから読み取られた x、y、および z の値にはオフセットがあるようです。
+オフセットを計算するには、コンパスを回転させて、x、y、z の最小値と最大値を取得します。
 ```
 offset = (minimum + maxmum) / 2
 value = valueRaw - offset
