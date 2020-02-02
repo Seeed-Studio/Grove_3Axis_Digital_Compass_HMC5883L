@@ -44,30 +44,27 @@
 #define ERRORCODE_1 "Entered scale was not valid, valid gauss values are: 0.88, 1.3, 1.9, 2.5, 4.0, 4.7, 5.6, 8.1"
 #define ERRORCODE_1_NUM 1
 
-struct MagnetometerScaled
-{
+struct MagnetometerScaled {
     float XAxis;
     float YAxis;
     float ZAxis;
 };
 
-struct MagnetometerRaw
-{
+struct MagnetometerRaw {
     short XAxis;
     short YAxis;
     short ZAxis;
 };
 
-class HMC5883L
-{
+class HMC5883L {
 
-public:         // used by xadow phone
+  public:         // used by xadow phone
 
     void initCompass();
     int getCompass();
-    
-public:
-    HMC5883L(TwoWire &w = Wire);
+
+  public:
+    HMC5883L(TwoWire& w = Wire);
 
 
     MagnetometerRaw readRawAxis();
@@ -77,15 +74,15 @@ public:
     short setScale(float gauss);
 
     char* getErrorText(short errorCode);
-    
-    
-protected:
+
+
+  protected:
 
     void write(short address, short byte);
     uint8_t* read(short address, short length);
 
-    private:
-    TwoWire * _wire;
+  private:
+    TwoWire* _wire;
     float m_Scale;
     uint8_t _buffer[16];
 };
