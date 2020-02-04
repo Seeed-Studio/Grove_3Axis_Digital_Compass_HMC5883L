@@ -1,4 +1,4 @@
-Grove 3-Axis Digital Compass HMC5883L
+Grove 3-Axis Digital Compass HMC5883L  [![Build Status](https://travis-ci.com/Seeed-Studio/Grove_3Axis_Digital_Compass_HMC5883L.svg?branch=master)](https://travis-ci.com/Seeed-Studio/Grove_3Axis_Digital_Compass_HMC5883L)
 ------------------------------
 
 This is an Arduino library for Grove - 3-Axis Digital Compass HMC5883L from Seeed Studio.
