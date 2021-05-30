@@ -57,6 +57,12 @@ void setup() {
 
     Serial.println("Constructing new HMC5883L");
 
+    Serial.println("Setting amount of samples for averaging to 4");
+    error = compass.setAverageSamples(4); // Set the amount of samples of the compass.
+    if (error != 0) { // If there is an error, print it out.
+        Serial.println(compass.getErrorText(error));
+    }
+    
     Serial.println("Setting scale to +/- 1.3 Ga");
     error = compass.setScale(1.3); // Set the scale of the compass.
     if (error != 0) { // If there is an error, print it out.

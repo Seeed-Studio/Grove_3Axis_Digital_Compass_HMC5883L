@@ -153,6 +153,25 @@ short HMC5883L::setScale(float gauss) {
     write(CONFIGURATION_REGISTERB, regValue);
 }
 
+short HMC5883L::setAverageSamples(uint8_t mode)
+{
+    uint8_t regValue = 0x00;
+    
+    if (mode == 1) {
+        regValue = 0x10;
+    } else if (mode == 2) {
+        regValue = 0x30;
+    } else if (mode == 4) {
+        regValue = 0x50;
+    } else if (mode == 8) {
+        regValue = 0x80;
+    } else {
+        return ERRORCODE_2_NUM;
+    }
+
+    write(CONFIGURATION_REGISTERA, regValue);
+}
+
 short HMC5883L::setMeasurementMode(uint8_t mode) {
     write(MODE_REGISTER, mode);
 }
@@ -183,8 +202,11 @@ uint8_t* HMC5883L::read(short address, short length) {
 }
 
 char* HMC5883L::getErrorText(short errorCode) {
-    if (ERRORCODE_1_NUM == 1) {
+    if (ERRORCODE_1_NUM == errorCode) {
         return ERRORCODE_1;
+    }
+    if (ERRORCODE_2_NUM == errorCode) {
+        return ERRORCODE_2;
     }
 
     return "Error not defined.";

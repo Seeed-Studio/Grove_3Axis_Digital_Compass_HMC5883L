@@ -44,6 +44,9 @@
 #define ERRORCODE_1 "Entered scale was not valid, valid gauss values are: 0.88, 1.3, 1.9, 2.5, 4.0, 4.7, 5.6, 8.1"
 #define ERRORCODE_1_NUM 1
 
+#define ERRORCODE_2 "Entered amount of samples was not valid, valid amounts are: 1, 2, 4, 8"
+#define ERRORCODE_2_NUM 2
+
 struct MagnetometerScaled {
     float XAxis;
     float YAxis;
@@ -71,6 +74,7 @@ class HMC5883L {
     MagnetometerScaled readScaledAxis();
 
     short setMeasurementMode(uint8_t mode);
+    short setAverageSamples(uint8_t mode);
     short setScale(float gauss);
 
     char* getErrorText(short errorCode);
