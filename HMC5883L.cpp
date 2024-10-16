@@ -188,7 +188,7 @@ uint8_t* HMC5883L::read(short address, short length) {
     _wire->write(address);
     _wire->endTransmission();
 
-    _wire->beginTransmission(HMC5883L_ADDRESS);
+
     _wire->requestFrom(HMC5883L_ADDRESS, length);
 
     if (_wire->available() == length) {
@@ -197,7 +197,7 @@ uint8_t* HMC5883L::read(short address, short length) {
         }
     }
 
-    _wire->endTransmission();
+
     return _buffer;
 }
 
