@@ -77,7 +77,7 @@ class HMC5883L {
     short setAverageSamples(uint8_t mode);
     short setScale(float gauss);
 
-    char* getErrorText(short errorCode);
+    const char* getErrorText(short errorCode);
 
 
   protected:

@@ -55,7 +55,6 @@ void HMC5883L::initCompass() {
 
 
 int HMC5883L::getCompass() {
-    MagnetometerRaw raw = readRawAxis();
     // Retrived the scaled values from the compass (scaled to the configured scale).
     MagnetometerScaled scaled = readScaledAxis();
 
@@ -63,7 +62,7 @@ int HMC5883L::getCompass() {
     int MilliGauss_OnThe_XAxis = scaled.XAxis;// (or YAxis, or ZAxis)
 
     // Calculate heading when the magnetometer is level, then correct for signs of axis.
-    float heading = atan2(scaled.YAxis, scaled.XAxis);
+    float heading = atan2(scaled.YAxis, MilliGauss_OnThe_XAxis);
 
     // Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
     // Find yours here: http://www.magnetic-declination.com/
@@ -151,6 +150,7 @@ short HMC5883L::setScale(float gauss) {
     // Setting is in the top 3 bits of the register.
     regValue = regValue << 5;
     write(CONFIGURATION_REGISTERB, regValue);
+    return 0;
 }
 
 short HMC5883L::setAverageSamples(uint8_t mode)
@@ -170,10 +170,12 @@ short HMC5883L::setAverageSamples(uint8_t mode)
     }
 
     write(CONFIGURATION_REGISTERA, regValue);
+    return 0;
 }
 
 short HMC5883L::setMeasurementMode(uint8_t mode) {
     write(MODE_REGISTER, mode);
+    return 0;
 }
 
 void HMC5883L::write(short address, short data) {
@@ -201,7 +203,7 @@ uint8_t* HMC5883L::read(short address, short length) {
     return _buffer;
 }
 
-char* HMC5883L::getErrorText(short errorCode) {
+const char* HMC5883L::getErrorText(short errorCode) {
     if (ERRORCODE_1_NUM == errorCode) {
         return ERRORCODE_1;
     }

@@ -184,7 +184,8 @@ void compassCalibrate(void) {
 // Our main program loop.
 void loop() {
     // Retrive the raw values from the compass (not scaled).
-    MagnetometerRaw raw = compass.readRawAxis();
+    // MagnetometerRaw raw = compass.readRawAxis();
+
     // Retrived the scaled values from the compass (scaled to the configured scale).
     MagnetometerScaled scaled = compass.readScaledAxis();
 
@@ -196,8 +197,8 @@ void loop() {
     int MilliGauss_OnThe_XAxis = scaled.XAxis;// (or YAxis, or ZAxis)
 
     // Calculate heading when the magnetometer is level, then correct for signs of axis.
-    float yxHeading = atan2(scaled.YAxis, scaled.XAxis);
-    float zxHeading = atan2(scaled.ZAxis, scaled.XAxis);
+    float yxHeading = atan2(scaled.YAxis, MilliGauss_OnThe_XAxis);
+    float zxHeading = atan2(scaled.ZAxis, MilliGauss_OnThe_XAxis);
 
     float heading = yxHeading;
 
@@ -219,7 +220,7 @@ void loop() {
     }
 
     // Convert radians to degrees for readability.
-    float headingDegrees = heading * 180 / M_PI;
+    // float headingDegrees = heading * 180 / M_PI;
 
     float yxHeadingDegrees = yxHeading * 180 / M_PI;
     float zxHeadingDegrees = zxHeading * 180 / M_PI;
